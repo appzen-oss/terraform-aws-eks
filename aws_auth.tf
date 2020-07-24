@@ -3,7 +3,7 @@ data "aws_caller_identity" "current" {
 
 locals {
   auth_launch_template_worker_roles = [
-    for index in range(0, var.create_eks ? local.worker_group_launch_template_count : 0) : {
+    for index in range(0, var.enabled ? local.worker_group_launch_template_count : 0) : {
       worker_role_arn = "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role/${element(
         coalescelist(
           aws_iam_instance_profile.workers_launch_template.*.role,
@@ -21,7 +21,7 @@ locals {
   ]
 
   auth_worker_roles = [
-    for index in range(0, var.create_eks ? local.worker_group_count : 0) : {
+    for index in range(0, var.enabled ? local.worker_group_count : 0) : {
       worker_role_arn = "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role/${element(
         coalescelist(
           aws_iam_instance_profile.workers.*.role,
@@ -62,7 +62,7 @@ locals {
 }
 
 resource "kubernetes_config_map" "aws_auth" {
-  count      = var.create_eks && var.manage_aws_auth ? 1 : 0
+  count      = var.enabled && var.create_cluster && var.manage_aws_auth ? 1 : 0
   depends_on = [null_resource.wait_for_cluster[0]]
 
   metadata {

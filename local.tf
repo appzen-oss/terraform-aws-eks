@@ -142,7 +142,7 @@ locals {
     "t2.xlarge"
   ]
 
-  kubeconfig = var.create_eks ? templatefile("${path.module}/templates/kubeconfig.tpl", {
+  kubeconfig = var.enabled && var.create_cluster ? templatefile("${path.module}/templates/kubeconfig.tpl", {
     kubeconfig_name                   = local.kubeconfig_name
     endpoint                          = aws_eks_cluster.this[0].endpoint
     cluster_auth_base64               = aws_eks_cluster.this[0].certificate_authority[0].data
