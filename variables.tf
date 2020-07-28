@@ -37,12 +37,6 @@ variable "config_output_path" {
   default     = "./"
 }
 
-variable "existing_instance_iam_profile_arn" {
-  description = "Esiting IAM Instance profile ARN, If empty, creates a IAM profile"
-  type        = string
-  default     = ""
-}
-
 variable "write_kubeconfig" {
   description = "Whether to write a Kubectl config file containing the cluster configuration. Saved to `config_output_path`."
   type        = bool
@@ -313,7 +307,7 @@ variable "enabled" {
 }
 
 variable "create_cluster" {
-  description = "Controls if EKS cluster needs to be created"
+  description = "Controls if EKS cluster needs to be created.. If set to false, only nodegroup (Or workergroup) gets created. Default is set to true which results in cluster and node group creation"
   type        = bool
   default     = true
 }
