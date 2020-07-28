@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "cluster_assume_role_policy" {
 }
 
 data "template_file" "userdata" {
-  count = var.create_eks ? local.worker_group_count : 0
+  count = var.enabled ? local.worker_group_count : 0
   template = lookup(
     var.worker_groups[count.index],
     "userdata_template_file",
@@ -102,7 +102,7 @@ data "template_file" "userdata" {
 }
 
 data "template_file" "launch_template_userdata" {
-  count = var.create_eks ? local.worker_group_launch_template_count : 0
+  count = var.enabled ? local.worker_group_launch_template_count : 0
   template = lookup(
     var.worker_groups_launch_template[count.index],
     "userdata_template_file",

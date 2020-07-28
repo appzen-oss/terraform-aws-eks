@@ -52,7 +52,7 @@ locals {
     root_volume_size              = "100"                       # root volume size of workers instances.
     root_volume_type              = "gp2"                       # root volume type of workers instances, can be 'standard', 'gp2', or 'io1'
     root_iops                     = "0"                         # The amount of provisioned IOPS. This must be set with a volume_type of "io1".
-    key_name                      = ""                          # The key name that should be used for the instances in the autoscaling group
+    key_name                      = "var.ec2_ssh_key"                          # The key name that should be used for the instances in the autoscaling group
     pre_userdata                  = ""                          # userdata to pre-append to the default userdata.
     userdata_template_file        = ""                          # alternate template to use for userdata
     userdata_template_extra_args  = {}                          # Additional arguments to use when expanding the userdata template file
@@ -66,7 +66,7 @@ locals {
     additional_security_group_ids = []                          # A list of additional security group ids to include in worker launch config
     protect_from_scale_in         = false                       # Prevent AWS from scaling in, so that cluster-autoscaler is solely responsible.
     iam_instance_profile_name     = ""                          # A custom IAM instance profile name. Used when manage_worker_iam_resources is set to false. Incompatible with iam_role_id.
-    iam_role_id                   = "local.default_iam_role_id" # A custom IAM role id. Incompatible with iam_instance_profile_name.  Literal local.default_iam_role_id will never be used but if iam_role_id is not set, the local.default_iam_role_id interpolation will be used.
+    iam_role_id                   = local.default_iam_role_id  # A custom IAM role id. Incompatible with iam_instance_profile_name.  Literal local.default_iam_role_id will never be used but if iam_role_id is not set, the local.default_iam_role_id interpolation will be used.
     suspended_processes           = ["AZRebalance"]             # A list of processes to suspend. i.e. ["AZRebalance", "HealthCheck", "ReplaceUnhealthy"]
     target_group_arns             = null                        # A list of Application LoadBalancer (ALB) target group ARNs to be associated to the autoscaling group
     enabled_metrics               = []                          # A list of metrics to be collected i.e. ["GroupMinSize", "GroupMaxSize", "GroupDesiredCapacity"]
@@ -142,7 +142,7 @@ locals {
     "t2.xlarge"
   ]
 
-  kubeconfig = var.create_eks ? templatefile("${path.module}/templates/kubeconfig.tpl", {
+  kubeconfig = var.enabled && var.create_cluster ? templatefile("${path.module}/templates/kubeconfig.tpl", {
     kubeconfig_name                   = local.kubeconfig_name
     endpoint                          = aws_eks_cluster.this[0].endpoint
     cluster_auth_base64               = aws_eks_cluster.this[0].certificate_authority[0].data

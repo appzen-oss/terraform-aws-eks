@@ -1,7 +1,7 @@
 # Worker Groups using Launch Templates
 
 resource "aws_autoscaling_group" "workers_launch_template" {
-  count = var.create_eks ? local.worker_group_launch_template_count : 0
+  count = var.enabled ? local.worker_group_launch_template_count : 0
   name_prefix = join(
     "-",
     compact(
@@ -210,7 +210,7 @@ resource "aws_autoscaling_group" "workers_launch_template" {
 }
 
 resource "aws_launch_template" "workers_launch_template" {
-  count = var.create_eks ? (local.worker_group_launch_template_count) : 0
+  count = var.enabled ? (local.worker_group_launch_template_count) : 0
   name_prefix = "${aws_eks_cluster.this[0].name}-${lookup(
     var.worker_groups_launch_template[count.index],
     "name",
@@ -460,7 +460,7 @@ resource "aws_launch_template" "workers_launch_template" {
 }
 
 resource "random_pet" "workers_launch_template" {
-  count = var.create_eks ? local.worker_group_launch_template_count : 0
+  count = var.enabled ? local.worker_group_launch_template_count : 0
 
   separator = "-"
   length    = 2
@@ -479,7 +479,7 @@ resource "random_pet" "workers_launch_template" {
 }
 
 resource "aws_iam_instance_profile" "workers_launch_template" {
-  count       = var.manage_worker_iam_resources && var.create_eks ? local.worker_group_launch_template_count : 0
+  count       = var.manage_worker_iam_resources && var.enabled ? local.worker_group_launch_template_count : 0
   name_prefix = aws_eks_cluster.this[0].name
   role = lookup(
     var.worker_groups_launch_template[count.index],

@@ -300,8 +300,14 @@ variable "attach_worker_cni_policy" {
   default     = true
 }
 
-variable "create_eks" {
+variable "enabled" {
   description = "Controls if EKS resources should be created (it affects almost all resources)"
+  type        = bool
+  default     = true
+}
+
+variable "create_cluster" {
+  description = "Controls if EKS cluster needs to be created.. If set to false, only nodegroup (Or workergroup) gets created. Default is set to true which results in cluster and node group creation"
   type        = bool
   default     = true
 }
